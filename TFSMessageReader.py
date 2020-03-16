@@ -15,11 +15,6 @@ pdf.set_right_margin(10)
 
 pasedlinenumber = 0
 
-teststring = "abcdefghijk"
-
-charpos = teststring.find('b')
-charpos2 = teststring.find('b',2, len(teststring))
-
 with open (infilename, encoding="utf-8") as myfile: # Open lorem.txt for reading text data.
      linenumber = 1
      for myline in myfile:                # For each line, stored as myline,
@@ -59,6 +54,9 @@ with open (infilename, encoding="utf-8") as myfile: # Open lorem.txt for reading
                     if (ord(charascc) > 256):
                         myline = myline.replace(charascc," ")
 
+                 myline = myline.replace("&apos;","\'")
+                 linelen = len (myline)
+
                  if (linelen > 100):
                     if totalnewlines > 0:
                         for newlinepos in newlineposlist:
@@ -68,19 +66,38 @@ with open (infilename, encoding="utf-8") as myfile: # Open lorem.txt for reading
                             curlinelen = len(curline)
                             commpletedlines = 0
                             if curlinelen > 100:
-                                startpos1 = startpos
-                                endpos1 = startpos + 100
+                                startpos1 = 0
+                                endpos1 = commpletedlines + 100
                                 if endpos1 > curlinelen:
                                     endpos1 = curlinelen
-                                while (commpletedlines < (curlinelen - 1)):
+                                while (commpletedlines < (curlinelen)):
+                                    '''
                                     curline2 = curline[startpos1:endpos1]
                                     curlinelen2 = len(curline2)
                                     pdf.cell(0, 10, txt=curline2, ln=linenumber, align="L")
                                     outfile.write("%s\n" % (curline2))
                                     linenumber = linenumber + 1
                                     commpletedlines += curlinelen2
-                                    startpos1 = endpos1 + 1
-                                    endpos1 = startpos1 + 100
+                                    startpos1 = endpos1
+                                    endpos1 = commpletedlines + 100
+                                    if endpos1 > curlinelen:
+                                        endpos1 = curlinelen
+                                    '''
+                                    curline2 = curline[startpos1:endpos1]
+                                    curlinelen2 = len(curline2)
+
+                                    if curlinelen2 >= 100:
+                                        lastspacepos = curline.rfind(" ", startpos1,endpos1)
+                                        endpos1 = lastspacepos
+                                        curline2 = curline[startpos1:endpos1]
+                                        curlinelen2 = len(curline2)
+
+                                    pdf.cell(0, 10, txt=curline2, ln=linenumber, align="L")
+                                    outfile.write("%s\n" % (curline2))
+                                    linenumber = linenumber + 1
+                                    commpletedlines += curlinelen2
+                                    startpos1 = endpos1
+                                    endpos1 = commpletedlines + 100
                                     if endpos1 > curlinelen:
                                         endpos1 = curlinelen
                             else:
@@ -93,7 +110,6 @@ with open (infilename, encoding="utf-8") as myfile: # Open lorem.txt for reading
                     pdf.cell(0, 10, txt=myline, ln=linenumber, align="L")
                     outfile.write("%s\n" % (myline))
                     linenumber = linenumber + 1
-
 pdf.output("C:\\Prasanna\\Trading\\TFS\\InnerCircle\\ChatExport_05_12_2019\\messages.pdf")
 myfile.close()
 outfile.close()
