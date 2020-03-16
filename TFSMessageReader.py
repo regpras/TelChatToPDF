@@ -1,8 +1,8 @@
 __author__ = 'kumbharp'
 from fpdf import FPDF
 
-infilename = "C:\\Users\\kumbharp\\Documents\\Study\\Automation\\messages.html"
-outfilename = "C:\\Users\\kumbharp\\Documents\\Study\\Automation\\messages.txt"
+infilename = "C:\\Prasanna\\Trading\\TFS\\InnerCircle\\ChatExport_05_12_2019\\messages.html"
+outfilename = "C:\\Prasanna\\Trading\\TFS\\InnerCircle\\ChatExport_05_12_2019\\messages.txt"
 
 outfile = open(outfilename, "w", encoding="utf-8")
 phase = 1 # Found text start
@@ -14,6 +14,11 @@ pdf.set_font("Arial", size=12)
 pdf.set_right_margin(10)
 
 pasedlinenumber = 0
+
+teststring = "abcdefghijk"
+
+charpos = teststring.find('b')
+charpos2 = teststring.find('b',2, len(teststring))
 
 with open (infilename, encoding="utf-8") as myfile: # Open lorem.txt for reading text data.
      linenumber = 1
@@ -43,79 +48,52 @@ with open (infilename, encoding="utf-8") as myfile: # Open lorem.txt for reading
 
                  linelen = len (myline)
                  startpos = 0
-                 newpos = 0
-                 processingline = linelen
 
+                 totalnewlines = 0
+                 newlineposlist = []
                  for element in range(0, linelen):
                     charascc = myline[element]
+                    if charascc == '\n':
+                        totalnewlines += 1
+                        newlineposlist.append(element)
                     if (ord(charascc) > 256):
                         myline = myline.replace(charascc," ")
 
                  if (linelen > 100):
-                     while(processingline > 100):
-                         newlinepos = myline.find("\n", startpos, linelen)
-                         x = 1
-                         if ((newlinepos - startpos) > 100):
-                             while ((newlinepos - startpos) > 100):
-                                loopinded = 0
-                                newpos += 100
-                                if newpos >= linelen:
-                                    newpos = linelen - 1
-                                pos = 0
-                                while (newpos > startpos):
-                                    if (newpos >= linelen):
-                                        print("out of range")
-                                    if(myline[newpos] != " "):
-                                        newpos -= 1
-                                    else:
-                                        pos = newpos
-                                        curline = myline[startpos:newpos]
-                                        curlinelen = len(curline)
-                                        pdf.cell(0, 10, txt=curline, ln=linenumber, align="L")
-                                        outfile.write("%s\n" % (curline))
-                                        linenumber = linenumber +1
-                                        startpos = newpos
-                                        processingline -= curlinelen
-                                        x += 1
-                                        break
-                             if ((newlinepos- startpos) > 0):
-                                 curline = myline[startpos:linelen]
-                                 curlinelen = len((myline[startpos:linelen]))
-                                 pdf.cell(0, 10, txt=curline, ln=linenumber, align="L")
-                                 outfile.write("%s\n" % (curline))
-                                 processingline -= curlinelen
-                                 linenumber = linenumber +1
-                         else:
-                            curline = myline[startpos:newlinepos]
-                            curlinelen = len(myline[startpos:newlinepos])
-                            pdf.cell(0, 10, txt=curline, ln=linenumber, align="L")
-                            outfile.write("%s\n" % (curline))
-                            linenumber = linenumber + 1
-                            startpos = newlinepos + 1
-                            processingline -= curlinelen
-                            newpos += curlinelen
-                            #newlinepos -= curlinelen
+                    if totalnewlines > 0:
+                        for newlinepos in newlineposlist:
+                            #split the string
+                            endpos = newlinepos
+                            curline = myline[startpos:endpos]
+                            curlinelen = len(curline)
+                            commpletedlines = 0
+                            if curlinelen > 100:
+                                startpos1 = startpos
+                                endpos1 = startpos + 100
+                                if endpos1 > curlinelen:
+                                    endpos1 = curlinelen
+                                while (commpletedlines < (curlinelen - 1)):
+                                    curline2 = curline[startpos1:endpos1]
+                                    curlinelen2 = len(curline2)
+                                    pdf.cell(0, 10, txt=curline2, ln=linenumber, align="L")
+                                    outfile.write("%s\n" % (curline2))
+                                    linenumber = linenumber + 1
+                                    commpletedlines += curlinelen2
+                                    startpos1 = endpos1 + 1
+                                    endpos1 = startpos1 + 100
+                                    if endpos1 > curlinelen:
+                                        endpos1 = curlinelen
+                            else:
+                                pdf.cell(0, 10, txt=curline, ln=linenumber, align="L")
+                                outfile.write("%s\n" % (curline))
+                                linenumber = linenumber + 1
+                            startpos = endpos + 1
                  else:
-                     curlinelen = len(myline)
-                     pdf.cell(0, 10, txt=myline, ln=linenumber, align="L")
-                     outfile.write("%s\n" % (myline))
-                     linenumber = linenumber +1
-                     processingline -= curlinelen
-                 #outfile.write("%s" % (myline))
-                 '''
-                 skipline = False
-                 for element in range(0, len(myline)):
-                    charascc = myline[element]
-                    if (ord(charascc) > 256):
-                        skipline = True
-                        break
-                 if (skipline == False):
+                    #length is less than 100 print string
                     pdf.cell(0, 10, txt=myline, ln=linenumber, align="L")
-                    linenumber = linenumber +1
-                    skipline = False
-                '''
-                 continue
+                    outfile.write("%s\n" % (myline))
+                    linenumber = linenumber + 1
 
-pdf.output("C:\\Users\\kumbharp\\Documents\\Study\\Automation\\messages.pdf")
+pdf.output("C:\\Prasanna\\Trading\\TFS\\InnerCircle\\ChatExport_05_12_2019\\messages.pdf")
 myfile.close()
 outfile.close()
