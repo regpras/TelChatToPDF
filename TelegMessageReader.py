@@ -1,8 +1,8 @@
 __author__ = 'kumbharp'
 from fpdf import FPDF
 
-infilename = "C:\\Prasanna\\Trading\\TFS\\InnerCircle\\ChatExport_05_12_2019\\messages.html"
-outfilename = "C:\\Prasanna\\Trading\\TFS\\InnerCircle\\ChatExport_05_12_2019\\messages.txt"
+infilename = "C:\\ChatExport_05_12_2019\\messages.html"
+outfilename = "C:\\ChatExport_05_12_2019\\messages.txt"
 
 outfile = open(outfilename, "w", encoding="utf-8")
 phase = 1 # Found text start
@@ -110,6 +110,6 @@ with open (infilename, encoding="utf-8") as myfile: # Open lorem.txt for reading
                     pdf.cell(0, 10, txt=myline, ln=linenumber, align="L")
                     outfile.write("%s\n" % (myline))
                     linenumber = linenumber + 1
-pdf.output("C:\\Prasanna\\Trading\\TFS\\InnerCircle\\ChatExport_05_12_2019\\messages.pdf")
+pdf.output("C:\\InnerCircle\\ChatExport_05_12_2019\\messages.pdf")
 myfile.close()
 outfile.close()
